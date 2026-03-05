@@ -32,12 +32,11 @@ pipeline {
                 dir('bookmyshow-app') {
                     withSonarQubeEnv('sonarqube') {
                         script {
-                          sh """
-                          ${scannerHome}/bin/sonar-scanner \
+                          sh '''
+                          sonar-scanner \
                           -Dsonar.projectKey=bookmyshow \
-                          -Dsonar.projectName=bookmyshow \
                           -Dsonar.sources=.
-                          """
+                          '''
                         }
                     }
                 }
