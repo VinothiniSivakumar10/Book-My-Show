@@ -11,7 +11,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/VinothiniSivakumar10/Book-My-Show.git'
+                git branch: 'feature-branch', url:'https://github.com/VinothiniSivakumar10/Book-My-Show.git'
             }
         }
 
