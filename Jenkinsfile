@@ -1,9 +1,19 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'nodejs'
+    }
+
     stages {
 
-        stage('Clone Repository') {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout Code') {
             steps {
                 git branch: 'feature-branch', url: 'https://github.com/VinothiniSivakumar10/Book-My-Show.git'
             }
@@ -21,11 +31,13 @@ pipeline {
             steps {
                 dir('bookmyshow-app') {
                     withSonarQubeEnv('sonarqube') {
-                        sh """
-                        ${tool 'sonar-scanner'}/bin/sonar-scanner \
-                        -Dsonar.projectKey=bookmyshow \
-                        -Dsonar.sources=.
-                        """
+                        script {
+                          sh """
+                          ${tool 'sonar-scanner'}/bin/sonar-scanner \
+                          -Dsonar.projectKey=bookmyshow \
+                          -Dsonar.sources=.
+                          """
+                        }
                     }
                 }
             }
@@ -41,13 +53,14 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                sh 'docker run -d -p 3000:3000 --name bookmyshow-container bookmyshow-app'
+                sh 'docker run -d -p 3000:3000 bookmyshow-app'
             }
         }
 
-        stage('Optional Verification') {
+        stage('Deploy to Kubernetes') {
             steps {
-                echo "Pipeline executed successfully and container is deployed."
+                sh 'kubectl apply -f deployment.yml'
+                sh 'kubectl apply -f service.yml'
             }
         }
 
@@ -56,44 +69,39 @@ pipeline {
     post {
 
         success {
-            echo 'Pipeline completed successfully!'
             emailext(
                 subject: "Jenkins Build SUCCESS",
                 body: """
-                Good News!
+Pipeline executed successfully.
 
-                The Jenkins pipeline for BookMyShow project executed successfully.
+Project: BookMyShow
+Build Number: ${env.BUILD_NUMBER}
+Job: ${env.JOB_NAME}
 
-                Build Status: SUCCESS
-                Project: BookMyShow
-                Jenkins Job: ${env.JOB_NAME}
-                Build Number: ${env.BUILD_NUMBER}
-                """,
+Application deployed successfully.
+""",
                 to: "your-email@gmail.com"
             )
         }
 
         failure {
-            echo 'Pipeline failed!'
             emailext(
                 subject: "Jenkins Build FAILED",
                 body: """
-                Attention!
+Pipeline execution FAILED.
 
-                The Jenkins pipeline has FAILED.
+Project: BookMyShow
+Build Number: ${env.BUILD_NUMBER}
+Job: ${env.JOB_NAME}
 
-                Project: BookMyShow
-                Jenkins Job: ${env.JOB_NAME}
-                Build Number: ${env.BUILD_NUMBER}
-
-                Please check Jenkins console logs.
-                """,
+Check Jenkins console logs.
+""",
                 to: "your-email@gmail.com"
             )
         }
 
         always {
-            echo "Pipeline execution finished."
+            echo "Pipeline finished."
         }
     }
 }
