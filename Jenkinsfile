@@ -16,12 +16,14 @@ pipeline {
         }
 
         stage('Install Dependencies') {
-            steps {
+           steps {
+             dir('bookmyshow-app') {
               nodejs('nodejs') {
-              sh 'npm install'
-              }
+                sh 'npm install'
+               }
+             }
            }
-       }
+        }
 
         stage('SonarQube Analysis') {
             steps {
