@@ -80,7 +80,7 @@ Job: ${env.JOB_NAME}
 
 Application deployed successfully.
 """,
-                to: "your-email@gmail.com"
+                to: "vinothinisivakumar31@gmail.com"
             )
         }
 
