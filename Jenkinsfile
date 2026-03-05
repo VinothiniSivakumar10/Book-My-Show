@@ -28,10 +28,8 @@ pipeline {
         stage('SonarQube Analysis') {
           steps {
             dir('bookmyshow-app') {
-              nodejs('nodejs') {
                 sh 'npm run sonar'
                }
-             }
            }
         }
 
