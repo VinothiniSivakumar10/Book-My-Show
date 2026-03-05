@@ -26,14 +26,20 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
+          steps {
+            dir('bookmyshow-app') {
+              nodejs('nodejs') {
                 sh 'npm run sonar'
-            }
+               }
+             }
+           }
         }
 
         stage('Build Docker Image') {
             steps {
+              dir('bookmyshow-app'){
                 sh 'docker build -t bms-app .'
+              }
             }
         }
 
