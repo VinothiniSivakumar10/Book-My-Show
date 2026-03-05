@@ -96,7 +96,7 @@ Job: ${env.JOB_NAME}
 
 Check Jenkins console logs.
 """,
-                to: "your-email@gmail.com"
+                to: "vinothinisivakumar31@gmail.com"
             )
         }
 
