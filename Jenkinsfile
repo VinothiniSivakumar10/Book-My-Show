@@ -31,7 +31,10 @@ pipeline {
             steps {
                 dir('bookmyshow-app') {
                     withSonarQubeEnv('sonarqube') {
-                        sh 'sonar-scanner'
+                        script {
+                          def scannerHome = tool 'sonar-scanner'
+                          sh "${scannerHome}/bin/sonar-scanner"
+                        }
                     }
                 }
             }
